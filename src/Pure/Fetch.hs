@@ -39,7 +39,7 @@ fetch Fetcher {..} = (if cached then (id :: (Caching => View) -> View) else cach
             request (store key . Just)
 
   in
-    asyncOnceAs @(key,value) fetch
+    asyncAs @(key,value) fetch
       (maybe Null view (join lookup))
 
 fetchAndUpdate :: forall key value update. (Caching, Eq key, Ord key, Typeable key, Typeable value, Typeable update) => Fetcher key value -> Updater value update -> View
@@ -63,5 +63,5 @@ fetchAndUpdate Fetcher {..} Updater { request = updateRequest, ..} = (if cached 
             updateRequest (store key . Just . update v)
 
   in
-    asyncOnceAs @(key,value,update) (fetch >> updating)
+    asyncAs @(key,value,update) (fetch >> updating)
         (maybe Null view (join lookup))
